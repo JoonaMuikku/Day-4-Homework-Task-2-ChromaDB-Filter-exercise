@@ -129,7 +129,11 @@ def print_results(label, results, show_distances=False):
 
 print("\n--- EXERCISE 1: Basic metadata filter ---")
 
-# Write your code here:
+result = collection.get(
+    where={"category": "vpn"},
+    include=["documents", "metadatas"]
+)
+print_results("Exercise 1", result)
 
 
 # ---------------------------------------------------------------------------
@@ -142,7 +146,30 @@ print("\n--- EXERCISE 1: Basic metadata filter ---")
 
 print("\n--- EXERCISE 2: Combined metadata filters ---")
 
-# Write your code here:
+# Task A
+result_a = collection.get(
+    where={
+        "$and": [
+            {"priority": "high"},
+            {"year": 2025},
+            {"verified": True}
+        ]
+    },
+    include=["documents", "metadatas"]
+)
+print_results("Exercise 2A", result_a)
+
+# Task B
+result_b = collection.get(
+    where={
+        "$or": [
+            {"category": "software"},
+            {"category": "printing"}
+        ]
+    },
+    include=["documents", "metadatas"]
+)
+print_results("Exercise 2B", result_b)
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +183,24 @@ print("\n--- EXERCISE 2: Combined metadata filters ---")
 
 print("\n--- EXERCISE 3: Full text search ---")
 
-# Write your code here:
+# Task A
+result_a = collection.get(
+    where_document={"$contains": "student"},
+    include=["documents", "metadatas"]
+)
+print_results("Exercise 3A", result_a)
+
+# Task B
+result_b = collection.get(
+    where_document={
+        "$and": [
+            {"$contains": "student"},
+            {"$not_contains": "password"}
+        ]
+    },
+    include=["documents", "metadatas"]
+)
+print_results("Exercise 3B", result_b)
 
 
 # ---------------------------------------------------------------------------
@@ -171,4 +215,11 @@ print("\n--- EXERCISE 3: Full text search ---")
 
 print("\n--- EXERCISE 4: Semantic query + metadata filter + text filter ---")
 
-# Write your code here:
+result = collection.query(
+    query_texts=["how do I print documents on campus"],
+    n_results=5,
+    where={"category": "printing"},
+    where_document={"$contains": "page"},
+    include=["documents", "metadatas", "distances"]
+)
+print_results("Exercise 4", result, show_distances=True)
